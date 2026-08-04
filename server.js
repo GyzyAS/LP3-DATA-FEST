@@ -18,7 +18,7 @@ async function prepareDatabase() {
     return;
   }
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS asistencias (
+    CREATE TABLE IF NOT EXISTS datafest_asistencias (
       id TEXT PRIMARY KEY,
       nombre VARCHAR(100) NOT NULL,
       informacion VARCHAR(250) DEFAULT '',
@@ -36,7 +36,7 @@ app.get('/api/health', async (_req, res) => {
 
 app.get('/api/asistencias', async (_req, res, next) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM asistencias ORDER BY fecha DESC');
+    const { rows } = await pool.query('SELECT * FROM datafest_asistencias ORDER BY fecha DESC');
     res.json(rows.map(row => ({ id: row.id, name: row.nombre, content: row.informacion, type: row.estado, location: 'cloud', size: row.informacion.length, date: row.fecha, favorite: row.verificado })));
   } catch (error) { next(error); }
 });
@@ -45,7 +45,7 @@ app.post('/api/asistencias', async (req, res, next) => {
   try {
     const item = req.body;
     const { rows } = await pool.query(
-      `INSERT INTO asistencias (id,nombre,informacion,estado,verificado,fecha) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      `INSERT INTO datafest_asistencias (id,nombre,informacion,estado,verificado,fecha) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
       [item.id, item.name, item.content || '', item.type || 'other', Boolean(item.favorite), item.date || new Date()]
     );
     res.status(201).json(rows[0]);
@@ -56,7 +56,7 @@ app.put('/api/asistencias/:id', async (req, res, next) => {
   try {
     const item = req.body;
     const { rows } = await pool.query(
-      `UPDATE asistencias SET nombre=$1, informacion=$2, estado=$3, verificado=$4, fecha=$5 WHERE id=$6 RETURNING *`,
+      `UPDATE datafest_asistencias SET nombre=$1, informacion=$2, estado=$3, verificado=$4, fecha=$5 WHERE id=$6 RETURNING *`,
       [item.name, item.content || '', item.type || 'other', Boolean(item.favorite), item.date || new Date(), req.params.id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Registro no encontrado' });
@@ -65,7 +65,7 @@ app.put('/api/asistencias/:id', async (req, res, next) => {
 });
 
 app.delete('/api/asistencias/:id', async (req, res, next) => {
-  try { await pool.query('DELETE FROM asistencias WHERE id=$1', [req.params.id]); res.status(204).end(); }
+  try { await pool.query('DELETE FROM datafest_asistencias WHERE id=$1', [req.params.id]); res.status(204).end(); }
   catch (error) { next(error); }
 });
 
