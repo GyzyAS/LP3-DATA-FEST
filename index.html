@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de asistencia del Data Fest con almacenamiento local y en la nube">
+  <title>DataFest Check-in | Control de asistencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="Ir al inicio">
+        <span class="brand-mark">D</span>
+        <span>DataFest.</span>
+      </a>
+
+      <button class="new-button" id="newFileBtn"><span>＋</span> Registrar lista</button>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <button class="nav-item active" data-view="all"><span>⌂</span> Asistencia general <b id="allCount">0</b></button>
+        <button class="nav-item" data-view="local"><span>▣</span> Registros locales <b id="localCount">0</b></button>
+        <button class="nav-item" data-view="cloud"><span>☁</span> Registros en la nube <b id="cloudCount">0</b></button>
+        <button class="nav-item" data-view="favorites"><span>✓</span> Verificados <b id="favoriteCount">0</b></button>
+      </nav>
+
+      <div class="storage-card">
+        <div class="storage-title"><span>Datos de asistencia local</span><strong id="usedPercent">0%</strong></div>
+        <div class="progress"><span id="storageBar"></span></div>
+        <p><strong id="usedStorage">0 MB</strong> de 5 MB utilizados</p>
+        <button id="clearLocalBtn">Limpiar registros locales</button>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">AG</div>
+        <div><strong>Equipo Analytics</strong><small>Participante Data Fest</small></div>
+        <button aria-label="Opciones">•••</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="Buscar archivos, documentos y más...">
+          <kbd>⌘ K</kbd>
+        </label>
+        <button class="icon-btn" id="syncBtn" aria-label="Sincronizar">↻</button>
+        <button class="icon-btn notification" aria-label="Notificaciones">♢<i></i></button>
+      </header>
+
+      <section class="content">
+        <div class="heading-row">
+          <div>
+            <p class="eyebrow">DATA FEST 2026 · LIMA</p>
+            <h1 id="pageTitle">Control de asistencia</h1>
+            <p id="pageSubtitle">Registra la llegada de participantes y sincroniza la información.</p>
+          </div>
+          <div class="heading-actions">
+            <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" hidden>
+            <button class="secondary" id="uploadBtn">⇧ Importar lista</button>
+            <button class="primary" id="createBtn">＋ Registrar lista</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card purple">
+            <div class="stat-icon">▣</div><div><span>Registros locales</span><strong id="statLocal">0</strong><small>Guardados en este dispositivo</small></div>
+          </article>
+          <article class="stat-card blue">
+            <div class="stat-icon">☁</div><div><span>Registros en la nube</span><strong id="statCloud">0</strong><small id="syncStatus">Todo sincronizado</small></div>
+          </article>
+          <article class="stat-card orange">
+            <div class="stat-icon">◷</div><div><span>Última actividad</span><strong id="lastActivity">Ahora</strong><small>Actualización más reciente</small></div>
+          </article>
+        </div>
+
+        <section class="files-section">
+          <div class="section-toolbar">
+            <div><h2>Participantes registrados</h2><span id="resultCount">0 personas</span></div>
+            <div class="toolbar-actions">
+              <select id="typeFilter" aria-label="Filtrar por estado"><option value="all">Todos los estados</option><option value="document">Presente</option><option value="image">Llegó tarde</option><option value="other">Pendiente</option></select>
+              <select id="sortSelect" aria-label="Ordenar"><option value="recent">Más recientes</option><option value="name">Por nombre</option><option value="size">Por tamaño</option></select>
+            </div>
+          </div>
+          <div class="attendance-head"><span>Participante</span><span>Equipo / correo</span><span>Hora</span><span>Almacenamiento</span><span>Estado</span><span>Acciones</span></div>
+          <div class="file-grid" id="fileGrid"></div>
+          <div class="empty-state" id="emptyState" hidden>
+            <div>♙</div><h3>No encontramos participantes</h3><p>Prueba con otra búsqueda o registra una nueva asistencia.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="fileDialog">
+    <form id="fileForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">DATA FEST · CHECK-IN</p><h2 id="dialogTitle">Registrar lista de asistencia</h2></div><button type="button" id="closeDialog">×</button></div>
+      <label>Lista de participantes
+        <textarea id="fileName" required rows="7" placeholder="Una persona por línea. Puedes usar este formato:&#10;&#10;Ana Torres, Data Makers, ana@correo.com&#10;Luis Mendoza, Insight Lab, luis@correo.com&#10;Camila Rojas, Código Abierto"></textarea>
+      </label>
+      <p class="list-help"><strong id="peopleCount">0 participantes</strong> en esta lista · Formato: nombre, equipo, correo</p>
+      <div class="form-row">
+        <label>¿Dónde guardar la lista?<select id="fileLocation"><option value="local">Local (este navegador)</option><option value="cloud">Nube del evento</option></select></label>
+        <label>Estado para toda la lista<select id="fileType"><option value="document">Presente</option><option value="image">Llegó tarde</option><option value="other">Pendiente</option></select></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="secondary" id="cancelDialog">Cancelar</button><button class="primary" id="submitDialog" type="submit">Guardar lista</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
