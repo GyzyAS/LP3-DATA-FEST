@@ -1,0 +1,17 @@
+{
+  "name": "data-fest-asistencia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Control de asistencia Data Fest con almacenamiento local y PostgreSQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+  }
+}
