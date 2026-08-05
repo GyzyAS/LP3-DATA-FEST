@@ -108,16 +108,26 @@ function showToast(message){
   clearTimeout(toastTimer); $('#toast').textContent=message; $('#toast').classList.add('show');
   toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600);
 }
+
+function configureLocation(preferredLocation=null){
+  const select=$('#fileLocation');
+  const locked=currentView==='local'||currentView==='cloud';
+  select.disabled=locked;
+  select.value=locked?currentView:(preferredLocation||'local');
+  $('#locationLabel').textContent=locked?'Destino de almacenamiento':'¿Dónde guardar la lista?';
+  $('#locationHelp').textContent=locked?`Fijado por la sección: ${currentView==='local'?'almacenamiento local':'PostgreSQL en la nube'}`:'';
+}
+
 function openDialog(){
   editingId=null; editingOriginalLocation=null; $('#fileForm').reset(); $('#dialogTitle').textContent='Registrar lista de asistencia'; $('#submitDialog').textContent='Guardar lista';
-  countPeople(); $('#fileDialog').showModal(); setTimeout(()=>$('#fileName').focus(),50);
+  configureLocation(); countPeople(); $('#fileDialog').showModal(); setTimeout(()=>$('#fileName').focus(),50);
 }
 
 function openEditDialog(file){
   editingId=file.id; editingOriginalLocation=file.location;
   $('#fileForm').reset();
   $('#fileName').value=[file.name,...String(file.content||'').split(' · ')].join(', ');
-  $('#fileLocation').value=file.location; $('#fileType').value=file.type;
+  configureLocation(file.location); $('#fileType').value=file.type;
   $('#dialogTitle').textContent='Editar asistencia'; $('#submitDialog').textContent='Guardar cambios';
   countPeople(); $('#fileDialog').showModal(); setTimeout(()=>$('#fileName').focus(),50);
 }

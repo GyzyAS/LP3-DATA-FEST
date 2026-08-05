@@ -7,3 +7,4 @@
 @media(max-width:420px){.file-grid{grid-template-columns:1fr}.secondary,.primary{padding:11px}.heading-row h1{font-size:25px}}
 .files-section{overflow-x:auto}.attendance-head,.file-grid.list{min-width:820px}
 .file-grid.list .file-actions{display:flex;gap:2px}.file-grid.list .edit-file{color:var(--purple);font-size:10px}
+dialog select:disabled{background:#f0eefb;color:var(--purple);cursor:not-allowed;opacity:1}#locationHelp{font-size:9px;color:var(--purple);font-weight:600;min-height:11px}
